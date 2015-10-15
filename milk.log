@@ -1,0 +1,273 @@
+1                                                          The SAS System                          23:19 Wednesday, October 14, 2015
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M0) 
+      Licensed to UNIVERSITY OF GUELPH, Site 70095643.
+NOTE: This session is executing on the Linux 3.6.11-4.fc16.x86_64 (LIN X64) platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 12.3 (maintenance)
+      SAS/ETS 12.3 (maintenance)
+      SAS/OR 12.3 (maintenance)
+      SAS/IML 12.3 (maintenance)
+      SAS/QC 12.3 (maintenance)
+
+NOTE: Additional host information:
+
+ Linux LIN X64 3.6.11-4.fc16.x86_64 #1 SMP Tue Jan 8 20:57:42 UTC 2013 x86_64 Fedora release 16 (Verne) 
+
+You are running SAS 9. Some SAS 8 files will be automatically converted 
+by the V9 engine; others are incompatible.  Please see 
+http://support.sas.com/rnd/migration/planning/platform/64bit.html
+
+PROC MIGRATE will preserve current SAS file attributes and is 
+recommended for converting all your SAS libraries from any 
+SAS 8 release to SAS 9.  For details and examples, please see
+http://support.sas.com/rnd/migration/index.html
+
+
+This message is contained in the SAS news file, and is presented upon
+initialization.  Edit the file "news" in the "misc/base" directory to
+display site-specific news and information in the program log.
+The command line option "-nonews" will prevent this display.
+
+
+
+
+NOTE: SAS initialization used:
+      real time           2.76 seconds
+      cpu time            0.03 seconds
+      
+1          options linesize=80;
+2          
+3          proc import /* Import data from Excel file */
+4              out=milk
+5              datafile='milk.xlsx'
+6              dbms=xlsx
+7              replace;
+8              sheet='total';
+9              getnames=yes;
+10         run;
+
+NOTE: The import data set has 275 observations and 12 variables.
+NOTE: WORK.MILK data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.38 seconds
+      cpu time            0.03 seconds
+      
+2                                The SAS System
+                                               23:19 Wednesday, October 14, 2015
+
+
+11         
+12         proc sort;
+13             by cow;
+14         
+
+NOTE: There were 275 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.MILK has 275 observations and 12 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.15 seconds
+      cpu time            0.01 seconds
+      
+
+15         proc import
+16             out=cowcards
+17             datafile='cowcards.xlsx'
+18             dbms=xlsx
+19             replace;
+20             getnames=yes;
+21         run;
+
+NOTE: The import data set has 18 observations and 10 variables.
+NOTE: WORK.COWCARDS data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.91 seconds
+      cpu time            0.01 seconds
+      
+
+22         
+23         proc sort;
+24             by cow;
+25         
+
+NOTE: There were 18 observations read from the data set WORK.COWCARDS.
+NOTE: The data set WORK.COWCARDS has 18 observations and 10 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+26         data all; /* merge two datasets */
+27             merge milk cowcards;
+28             by cow;
+29             if cow = 4217 or cow = 4112 then delete; /* dropped from trial */
+30             if block > 4 then delete;
+31         
+
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 275 observations read from the data set WORK.MILK.
+NOTE: There were 18 observations read from the data set WORK.COWCARDS.
+NOTE: The data set WORK.ALL has 270 observations and 19 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.00 seconds
+      
+
+32         data pretrial trial;
+3                                The SAS System
+                                               23:19 Wednesday, October 14, 2015
+
+33             set all;
+34             if day < 0 then output pretrial;
+35                 else output trial;
+36         
+37         run;
+
+NOTE: There were 270 observations read from the data set WORK.ALL.
+NOTE: The data set WORK.PRETRIAL has 180 observations and 19 variables.
+NOTE: The data set WORK.TRIAL has 90 observations and 19 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+38         
+39         proc means data = pretrial noprint; /* generate pretrial average my
+39       ! for covariate */
+40             var my;
+41             by cow;
+42             output out=covmy;
+43         run;
+
+NOTE: There were 180 observations read from the data set WORK.PRETRIAL.
+NOTE: The data set WORK.COVMY has 30 observations and 5 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.00 seconds
+      
+
+44         
+45         proc sort data = milk;
+46             by day tx;
+47         run;
+
+NOTE: There were 275 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.MILK has 275 observations and 12 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.02 seconds
+      
+
+48         
+49         proc means data = milk ; /* generate daily mean my by tx */
+50             var my;
+51             by day tx;
+52             output out=avmy;
+53         
+
+NOTE: There were 275 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.AVMY has 455 observations and 6 variables.
+NOTE: The PROCEDURE MEANS printed pages 1-19.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           1.08 seconds
+      cpu time            0.03 seconds
+      
+
+54         data avmy;
+4                                The SAS System
+                                               23:19 Wednesday, October 14, 2015
+
+55             set avmy;
+56             if _STAT_ ne "MEAN" then delete;
+57             avmy = my;
+58             drop my _TYPE_ _FREQ_ _STAT_;
+59         
+
+NOTE: There were 455 observations read from the data set WORK.AVMY.
+NOTE: The data set WORK.AVMY has 91 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+60         proc sort data = avmy;
+61             by tx day;
+62         run;
+
+NOTE: There were 91 observations read from the data set WORK.AVMY.
+NOTE: The data set WORK.AVMY has 91 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+63         
+64         data covmy;
+65             set covmy;
+66             if _STAT_ ne "MEAN" then delete;
+67             amy = my;
+68             drop my _TYPE_ _FREQ_ _STAT_;
+69         
+
+NOTE: There were 30 observations read from the data set WORK.COVMY.
+NOTE: The data set WORK.COVMY has 6 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+70         data analysis;
+71             merge trial covmy;
+72             by cow;
+73         
+
+NOTE: There were 90 observations read from the data set WORK.TRIAL.
+NOTE: There were 6 observations read from the data set WORK.COVMY.
+NOTE: The data set WORK.ANALYSIS has 90 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+74         proc mixed covtest data = analysis;
+75             class tx;
+76             model my = tx amy;
+77             random block parity dim;
+78         
+5                                The SAS System
+                                               23:19 Wednesday, October 14, 2015
+
+79         run;
+
+NOTE: Convergence criteria met.
+NOTE: Estimated G matrix is not positive definite.
+NOTE: The PROCEDURE MIXED printed pages 20-21.
+NOTE: PROCEDURE MIXED used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.02 seconds
+      
+
+80         
+81         proc export
+82             data = avmy
+83             dbms = xlsx
+84             outfile = 'avmy.xlsx'
+85             replace;
+86         run;
+
+NOTE: The export data set has 91 observations and 3 variables.
+NOTE: "/home/seymourd/cull/avmy.xlsx" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           2.22 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           8.59 seconds
+      cpu time            0.16 seconds
+      

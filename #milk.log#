@@ -1,0 +1,130 @@
+1                                                          The SAS System                           18:48 Tuesday, September 1, 2015
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M0) 
+      Licensed to UNIVERSITY OF GUELPH, Site 70095643.
+NOTE: This session is executing on the Linux 3.6.11-4.fc16.x86_64 (LIN X64) platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 12.3 (maintenance)
+      SAS/ETS 12.3 (maintenance)
+      SAS/OR 12.3 (maintenance)
+      SAS/IML 12.3 (maintenance)
+      SAS/QC 12.3 (maintenance)
+
+NOTE: Additional host information:
+
+ Linux LIN X64 3.6.11-4.fc16.x86_64 #1 SMP Tue Jan 8 20:57:42 UTC 2013 x86_64 Fedora release 16 (Verne) 
+
+You are running SAS 9. Some SAS 8 files will be automatically converted 
+by the V9 engine; others are incompatible.  Please see 
+http://support.sas.com/rnd/migration/planning/platform/64bit.html
+
+PROC MIGRATE will preserve current SAS file attributes and is 
+recommended for converting all your SAS libraries from any 
+SAS 8 release to SAS 9.  For details and examples, please see
+http://support.sas.com/rnd/migration/index.html
+
+
+This message is contained in the SAS news file, and is presented upon
+initialization.  Edit the file "news" in the "misc/base" directory to
+display site-specific news and information in the program log.
+The command line option "-nonews" will prevent this display.
+
+
+
+
+NOTE: SAS initialization used:
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+1          options linesize=80;
+2          
+3          proc import /* Import data from Excel file */
+4              out=milk
+5              datafile='milk.xlsx'
+6              dbms=xlsx
+7              replace;
+8              sheet='total';
+9              getnames=yes;
+10         run;
+
+NOTE: The import data set has 275 observations and 12 variables.
+NOTE: WORK.MILK data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.22 seconds
+      cpu time            0.03 seconds
+      
+2                                The SAS System 18:48 Tuesday, September 1, 2015
+
+
+11         
+12         proc import
+13             out=cowcards
+14             datafile='cowcards.xlsx'
+15             dbms=xlsx
+16             replace;
+NOTE: The previous statement has been deleted.
+17             getnames=yes
+18         run;
+           ___
+           22
+           202
+ERROR 22-322: Expecting ;.  
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+19         
+
+NOTE: The import data set has 18 observations and 10 variables.
+NOTE: WORK.COWCARDS data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+20         data all; /* merge two datasets */
+21             merge milk cowcards;
+22             by cow;
+23         
+
+WARNING: Multiple lengths were specified for the variable tx by input data 
+         set(s). This can cause truncation of data.
+ERROR: BY variables are not properly sorted on data set WORK.MILK.
+block=3 date=10AUG2015 cow=4203 tx=ctrl day=14 am=19 pm=. my=19 fat=0.9158
+protein=0.6346 lactose=0.9044 los=1.0963 parity=. dim=. start=. biopsy=. blood=.
+slaughter=. J=  FIRST.cow=0 LAST.cow=0 _ERROR_=1 _N_=91
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: SAS set option OBS=0 and will continue to check statements. 
+      This might cause NOTE: No observations in data set.
+NOTE: There were 91 observations read from the data set WORK.MILK.
+NOTE: There were 3 observations read from the data set WORK.COWCARDS.
+WARNING: The data set WORK.ALL may be incomplete.  When this step was stopped 
+         there were 90 observations and 19 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+24         proc print;
+25         
+26         run;
+
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+3                                The SAS System 18:48 Tuesday, September 1, 2015
+
+      
+
+ERROR: Errors printed on page 2.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           0.30 seconds
+      cpu time            0.07 seconds
+      
