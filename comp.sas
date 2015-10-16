@@ -59,17 +59,64 @@ data pm;
 proc sort;
     by cow day;
 
-data final;
+data total;
     merge milk am pm;
     by cow day;
     fat_day = (fat_am*am/100) + (fat_pm*pm/100);
     pro_day = (pro_am*am/100) + (pro_pm*pm/100);
     lac_day = (lac_am*am/100) + (lac_pm*pm/100);
     los_day = (los_am*am/100) + (los_pm*pm/100);
+    fat_pct = (fat_day/my)*100;
+    pro_pct = (pro_day/my)*100;
+    lac_pct = (lac_day/my)*100;
+    los_pct = (los_day/my)*100;
 
-proc sort data = final;
+proc sort data = total;
     by tx day;
 
-proc means data=final;
-    var fat_day pro_day lac_day los_day;
-    by tx day;
+data pretrial;
+    set total;
+    if day ne -1 then delete;
+
+proc means data=pretrial;
+    title 'Pretrial';
+    var fat_day pro_day lac_day los_day fat_pct pro_pct lac_pct los_pct;
+    by tx;
+    output out = pretrial;
+
+data trial;
+    set total;
+    if day < 9 then delete;
+
+proc means data = trial;
+    title 'Trial';
+    var fat_day pro_day lac_day los_day fat_pct pro_pct lac_pct los_pct;
+    by tx;
+    output out=trial;
+
+data pretrial;
+    set pretrial;
+    prepost = 'pre';
+    if _STAT_ = 'N' then delete;
+    if _STAT_ = 'MIN' then delete;
+    if _STAT_ = 'MAX' then delete;
+    drop _TYPE_ _FREQ_;
+
+data trial;
+    set trial;
+    prepost= 'post';
+    if _STAT_ = 'N' then delete;
+    if _STAT_ = 'MIN' then delete;
+    if _STAT_ = 'MAX' then delete;
+    drop _TYPE_ _FREQ_;
+
+data final;
+    set pretrial trial;
+
+proc export
+    data = final
+    dbms = xlsx
+    outfile = 'comps.xlsx'
+    replace;
+
+run;
