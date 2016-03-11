@@ -1,0 +1,90 @@
+            Effects of Energy Restriction of Milk Protein Synthesis            1
+                            Average Daily Milk Yield
+                                                   16:56 Thursday, March 3, 2016
+
+                              The Mixed Procedure
+
+                               Model Information
+
+             Data Set                     WORK.MIXED               
+             Dependent Variable           dmy                      
+             Covariance Structure         Variance Components      
+             Estimation Method            REML                     
+             Residual Variance Method     Profile                  
+             Fixed Effects SE Method      Model-Based              
+             Degrees of Freedom Method    Containment              
+
+
+                            Class Level Information
+ 
+               Class    Levels    Values
+
+               tx            2    ctrl rstr                     
+
+
+                                  Dimensions
+
+                      Covariance Parameters             4
+                      Columns in X                      4
+                      Columns in Z                      3
+                      Subjects                          1
+                      Max Obs Per Subject              80
+
+
+                            Number of Observations
+
+                  Number of Observations Read              80
+                  Number of Observations Used              75
+                  Number of Observations Not Used           5
+
+
+                               Iteration History
+ 
+          Iteration    Evaluations    -2 Res Log Like       Criterion
+
+                  0              1       383.67751438                
+                  1              1       383.67751438      0.00000000
+
+
+                           Convergence criteria met.                    
+
+
+                        Covariance Parameter Estimates
+ 
+                                     Standard         Z
+            Cov Parm     Estimate       Error     Value      Pr > Z
+
+            block               0           .       .         .    
+            parity              0           .       .         .    
+            dim                 0           .       .         .    
+            Residual       9.6644      1.6107      6.00      <.0001
+            Effects of Energy Restriction of Milk Protein Synthesis            2
+                            Average Daily Milk Yield
+                                                   16:56 Thursday, March 3, 2016
+
+                              The Mixed Procedure
+
+                                Fit Statistics
+
+                     -2 Res Log Likelihood           383.7
+                     AIC (smaller is better)         385.7
+                     AICC (smaller is better)        385.7
+                     BIC (smaller is better)         383.7
+
+
+                         Type 3 Tests of Fixed Effects
+ 
+                               Num     Den
+                 Effect         DF      DF    F Value    Pr > F
+
+                 tx              1      69       0.22    0.6434
+                 cov_dmy         1      69     679.47    <.0001
+
+
+                              Least Squares Means
+ 
+                                   Standard
+     Effect    tx      Estimate       Error      DF    t Value    Pr > |t|
+
+     tx        ctrl     35.8057      0.5135      69      69.72      <.0001
+     tx        rstr     36.1426      0.5067      69      71.33      <.0001

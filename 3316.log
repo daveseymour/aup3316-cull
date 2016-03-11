@@ -1,0 +1,434 @@
+1                                                          The SAS System                              16:56 Thursday, March 3, 2016
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M0) 
+      Licensed to UNIVERSITY OF GUELPH, Site 70095643.
+NOTE: This session is executing on the Linux 3.6.11-4.fc16.x86_64 (LIN X64) platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 12.3 (maintenance)
+      SAS/ETS 12.3 (maintenance)
+      SAS/OR 12.3 (maintenance)
+      SAS/IML 12.3 (maintenance)
+      SAS/QC 12.3 (maintenance)
+
+NOTE: Additional host information:
+
+ Linux LIN X64 3.6.11-4.fc16.x86_64 #1 SMP Tue Jan 8 20:57:42 UTC 2013 x86_64 Fedora release 16 (Verne) 
+
+You are running SAS 9. Some SAS 8 files will be automatically converted 
+by the V9 engine; others are incompatible.  Please see 
+http://support.sas.com/rnd/migration/planning/platform/64bit.html
+
+PROC MIGRATE will preserve current SAS file attributes and is 
+recommended for converting all your SAS libraries from any 
+SAS 8 release to SAS 9.  For details and examples, please see
+http://support.sas.com/rnd/migration/index.html
+
+
+This message is contained in the SAS news file, and is presented upon
+initialization.  Edit the file "news" in the "misc/base" directory to
+display site-specific news and information in the program log.
+The command line option "-nonews" will prevent this display.
+
+
+
+
+NOTE: SAS initialization used:
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+1          options linesize = 80;
+2          
+3          title 'Effects of Energy Restriction of Milk Protein Synthesis';
+4          
+5          proc import
+6              out = cards
+7              datafile = '3316_sas.xlsx'
+8              dbms = xlsx
+9              replace;
+10             getnames = yes;
+11             sheet = 'cards';
+12         run;
+
+NOTE: The import data set has 12 observations and 10 variables.
+NOTE: WORK.CARDS data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.04 seconds
+2                                The SAS System    16:56 Thursday, March 3, 2016
+
+      cpu time            0.02 seconds
+      
+
+13         
+14         proc import
+15             out = milk
+16             datafile = '3316_sas.xlsx'
+17             dbms = xlsx
+18             replace;
+19             getnames = yes;
+20             sheet = 'milk';
+21         run;
+
+NOTE: The import data set has 450 observations and 15 variables.
+NOTE: WORK.MILK data set was successfully created.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.04 seconds
+      
+
+22         
+23         data milk;
+24             set milk;
+25             dmy = my_am + my_pm;
+26         
+27         /* milk composition */
+28         
+
+NOTE: Character values have been converted to numeric 
+      values at the places given by: (Line):(Column).
+      25:19   
+NOTE: Missing values were generated as a result of performing an operation on 
+      missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      29 at 25:17   
+NOTE: There were 450 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.MILK has 450 observations and 16 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+29         data pre;
+30             set milk;
+31             if day ne -1 then delete;
+32         
+
+NOTE: There were 450 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.PRE has 10 observations and 16 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.02 seconds
+      
+
+33         data post;
+34             set milk;
+35             if day < 9 or day > 13 then delete;
+36         
+3                                The SAS System    16:56 Thursday, March 3, 2016
+
+
+NOTE: There were 450 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.POST has 50 observations and 16 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+37         data comp;
+38             set pre post;
+39             fat_day = (fat_am*my_am/100) + (fat_pm*my_pm/100);
+40             pro_day = (pro_am*my_am/100) + (pro_pm*my_pm/100);
+41             lac_day = (lac_am*my_am/100) + (lac_pm*my_pm/100);
+42             los_day = (los_am*my_am/100) + (los_pm*my_pm/100);
+43             fat_pct = (fat_day/dmy)*100;
+44             pro_pct = (pro_day/dmy)*100;
+45             lac_pct = (lac_day/dmy)*100;
+46             los_pct = (los_day/dmy)*100;
+47         
+
+NOTE: Character values have been converted to numeric 
+      values at the places given by: (Line):(Column).
+      39:44   40:44   41:44   42:44   
+NOTE: Missing values were generated as a result of performing an operation on 
+      missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      3 at 39:22   3 at 39:43   3 at 40:22   3 at 40:43   3 at 41:22
+      3 at 41:43   3 at 42:22   3 at 42:43   6 at 43:23   6 at 44:23
+      6 at 45:23   6 at 46:23   
+NOTE: There were 10 observations read from the data set WORK.PRE.
+NOTE: There were 50 observations read from the data set WORK.POST.
+NOTE: The data set WORK.COMP has 60 observations and 24 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+48         proc sort data=comp;
+49             by tx;
+50         
+
+NOTE: There were 60 observations read from the data set WORK.COMP.
+NOTE: The data set WORK.COMP has 60 observations and 24 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+51         proc means data = comp (where = (day = -1)) noprint;
+52             title2 'Pre-Trial Milk Composition';
+53             var fat_day pro_day lac_day los_day fat_pct pro_pct lac_pct
+53       ! los_pct;
+54             by tx;
+55             output out = pre_comp
+56                 mean = fat_mu pro_mu lac_mu los_mu fat_pct_mu pro_pct_mu
+56       ! lac_pct_mu
+57                     los_pct_mu
+58                 std = fat_se pro_se lac_se los_se fat_pct_se pro_pct_se
+4                                The SAS System    16:56 Thursday, March 3, 2016
+
+58       ! lac_pct_se
+59                     los_pct_se;
+60         
+
+NOTE: There were 10 observations read from the data set WORK.COMP.
+      WHERE day=-1;
+NOTE: The data set WORK.PRE_COMP has 2 observations and 19 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+61         proc means data = comp (where = (day ne -1)) noprint;
+62             title2 'Trial Milk Composition';
+63             var fat_day pro_day lac_day los_day fat_pct pro_pct lac_pct
+63       ! los_pct;
+64             by tx;
+65             output out = post_comp
+66                 mean = fat_mu pro_mu lac_mu los_mu fat_pct_mu pro_pct_mu
+66       ! lac_pct_mu
+67                     los_pct_mu
+68                 std = fat_se pro_se lac_se los_se fat_pct_se pro_pct_se
+68       ! lac_pct_se
+69                     los_pct_se;
+70         
+
+NOTE: There were 50 observations read from the data set WORK.COMP.
+      WHERE day not = -1;
+NOTE: The data set WORK.POST_COMP has 2 observations and 19 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+71         data pre_comp;
+72             set pre_comp;
+73             period = 'pre';
+74         
+
+NOTE: There were 2 observations read from the data set WORK.PRE_COMP.
+NOTE: The data set WORK.PRE_COMP has 2 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+75         data post_comp;
+76             set post_comp;
+77             period = 'pos';
+78         
+
+NOTE: There were 2 observations read from the data set WORK.POST_COMP.
+NOTE: The data set WORK.POST_COMP has 2 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+5                                The SAS System    16:56 Thursday, March 3, 2016
+
+79         data comp_means;
+80             set pre_comp post_comp;
+81             drop _TYPE_ _FREQ_;
+82         
+
+NOTE: There were 2 observations read from the data set WORK.PRE_COMP.
+NOTE: There were 2 observations read from the data set WORK.POST_COMP.
+NOTE: The data set WORK.COMP_MEANS has 4 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+83         proc export
+84             data = comp_means
+85             dbms = xlsx
+86             outfile = '3316_sas_out.xlsx'
+87             replace;
+88             sheet = 'comp';
+89         run;
+
+NOTE: The export data set has 4 observations and 18 variables.
+NOTE: "/home/seymourd/3316/3316_sas_out.xlsx" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+90         
+91         /* milk yield */
+92         
+93         proc sort data=milk;
+94             by day;
+95         
+96         /* the 'nway' option suppresses the computation of daily mean across
+96       ! class (i.e.
+97             average dmy across treatments) */
+98         
+
+NOTE: There were 450 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.MILK has 450 observations and 16 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+99         proc means data = milk nway noprint missing;
+100            title2 'Average Daily Milk Yield';
+101            class tx;
+102            by day;
+103            var dmy;
+104            output out=dmy_means mean=dmy_mu std=dmy_se;
+105        
+
+NOTE: There were 450 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.DMY_MEANS has 90 observations and 6 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+6                                The SAS System    16:56 Thursday, March 3, 2016
+
+      cpu time            0.01 seconds
+      
+
+106        data dmy_means;
+107            set dmy_means;
+108            drop _TYPE_ _FREQ_;
+109        
+
+NOTE: There were 90 observations read from the data set WORK.DMY_MEANS.
+NOTE: The data set WORK.DMY_MEANS has 90 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+110        proc sort data=dmy_means;
+111            by tx day;
+112        
+
+NOTE: There were 90 observations read from the data set WORK.DMY_MEANS.
+NOTE: The data set WORK.DMY_MEANS has 90 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+113        proc export
+114            data = dmy_means
+115            outfile = '3316_sas_out.xlsx'
+116            dbms = xlsx
+117            replace;
+118            sheet = 'dmy';
+119        run;
+
+NOTE: The export data set has 90 observations and 4 variables.
+NOTE: "/home/seymourd/3316/3316_sas_out.xlsx" file was successfully created.
+NOTE: PROCEDURE EXPORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+120        
+121        proc sort data = milk;
+122            by cow;
+123        
+
+NOTE: There were 450 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.MILK has 450 observations and 16 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+124        proc sort data = cards;
+125            by cow;
+126        
+
+NOTE: There were 12 observations read from the data set WORK.CARDS.
+7                                The SAS System    16:56 Thursday, March 3, 2016
+
+NOTE: The data set WORK.CARDS has 12 observations and 10 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+127        data mixed;
+128            merge cards milk;
+129            by cow;
+130            if drop = 'yes' then delete;
+131            if day < -7 then delete;
+132        
+
+NOTE: There were 12 observations read from the data set WORK.CARDS.
+NOTE: There were 450 observations read from the data set WORK.MILK.
+NOTE: The data set WORK.MIXED has 220 observations and 23 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+133        proc means data=mixed(where=(day < 0)) noprint;
+134            var dmy;
+135            by cow;
+136            output out=cov_mixed mean=cov_dmy;
+137        
+
+NOTE: There were 70 observations read from the data set WORK.MIXED.
+      WHERE day<0;
+NOTE: The data set WORK.COV_MIXED has 10 observations and 4 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+138        data mixed;
+139            merge mixed cov_mixed;
+140            by cow;
+141            drop _TYPE_ _FREQ_ start biopsy blood slaughter drop;
+142        
+
+NOTE: There were 220 observations read from the data set WORK.MIXED.
+NOTE: There were 10 observations read from the data set WORK.COV_MIXED.
+NOTE: The data set WORK.MIXED has 220 observations and 19 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+143        proc mixed covtest data = mixed(where=(day <= 0));
+144            class tx;
+145            model dmy = tx cov_dmy;
+146            random block parity dim;
+147            lsmeans tx;
+148        run;
+
+NOTE: 5 observations are not included because of missing values.
+NOTE: Convergence criteria met.
+8                                The SAS System    16:56 Thursday, March 3, 2016
+
+NOTE: Estimated G matrix is not positive definite.
+NOTE: The PROCEDURE MIXED printed pages 1-2.
+NOTE: PROCEDURE MIXED used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           0.30 seconds
+      cpu time            0.23 seconds
+      
